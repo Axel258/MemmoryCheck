@@ -1,0 +1,168 @@
+unit Unit2;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, StrUtils, JPEG, ToolWin, ComCtrls,
+  Menus;
+   const A=8; // Кол-во карт
+         N=3; // Виды карт
+
+
+   var Img: array [1..A] of TImage;
+       Name1: array [1..N] of string;
+       Pushed: byte=0;
+       GameEnd:integer=A div 2;
+       k,l,T:integer;
+type
+  TForm2 = class(TForm)
+    Timer1: TTimer;
+    Label1: TLabel;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    Image8: TImage;
+    MainMenu1: TMainMenu;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+   // procedure Image2Click(Sender: TObject);
+
+    procedure FormCreate(Sender: TObject);
+    procedure N5Click(Sender: TObject);
+    procedure ImageClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+   // procedure Image1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+
+end;
+
+var
+  Form2: TForm2;
+  M: array [1..A] of integer;
+
+  implementation
+
+{$R *.dfm}
+
+
+
+{procedure TForm2.ImageClick(Sender: TObject);
+begin
+    Image1.Visible := True;
+    Image2.Visible := False;
+end; }
+
+procedure TForm2.FormCreate(Sender: TObject);
+var
+    i : integer;
+
+begin
+  for i:=1 to N do
+    Name1[i]:=IntToStr(i)+'.jpg';
+
+    randomize;
+
+   for i:=1 to A div 2 do     // Задаються начальные изображения
+    begin
+      repeat
+      M[i]:=random(N)+1;
+      until M[i]>1;
+      M[A-i+1]:=M[i];
+
+    end;
+
+   Img[1]:=  Image1;
+   Img[2]:=  Image2;
+   Img[3]:=  Image3;
+   Img[4]:=  Image4;
+   Img[5]:=  Image5;
+   Img[6]:=  Image6;
+   Img[7]:=  Image7;
+   Img[8]:=  Image8;
+   for i:=1 to A do
+   begin
+      Img[i].Picture.LoadFromFile(Name1[1]);
+      Img[i].Visible:=True;
+   end;
+end;
+
+
+procedure TForm2.N5Click(Sender: TObject);
+begin
+    Form2.Close;
+end;
+
+procedure TForm2.ImageClick(Sender: TObject);
+var Click:string;
+
+begin
+    if Sender is TComponent then
+     Click:=(Sender as TComponent).Name;
+
+     case  Pushed   of
+     0: begin k:=StrToInt(Click[length(Click)]);
+              Pushed:=Pushed+1;
+              Img[k].Picture.LoadFromFile(Name1[M[k]]);
+        end;
+     1: begin l:=StrToInt(Click[length(Click)]);
+              Pushed:=Pushed+1;
+              Img[l].Picture.LoadFromFile(Name1[M[l]]);
+        end;
+    end;
+
+end;
+
+
+
+     // l:=k;
+ {
+      if Pushed < 2 then
+      begin
+       Img[k].Picture.LoadFromFile(Name1[M[k]]);
+       l:=k;
+       Pushed:=Pushed+1;
+       end
+      else}
+
+
+
+
+procedure TForm2.Timer1Timer(Sender: TObject);
+begin
+   T:=T+1;
+   Label1.Caption:=IntToStr(T);
+   if GameEnd=0 then
+     begin
+     Showmessage('Вы победили!');
+     Sleep(1000);
+     Form2.Close;
+     end;
+   if (Pushed=2)  then
+        if (M[l]=M[k]) and (l<>k) then
+         begin
+           Pushed:=0;
+          Img[k].Visible:=False;
+          Img[l].Visible:=False;
+          GameEnd:=GameEnd-1;
+         end
+        else
+          begin
+            Pushed:=0;
+            Img[k].Picture.LoadFromFile(Name1[1]);
+            Img[l].Picture.LoadFromFile(Name1[1]);
+          end
+end;
+
+end.
